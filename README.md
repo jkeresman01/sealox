@@ -6,4 +6,4 @@ A C# implementation of the Lox language.
 
 - `dotnet build SeaLox.sln`
 - `dotnet run --project SeaLox.Lox`
-- `dotnet run --project SeaLox.Tool` → prints `Works!`
+- `dotnet run --project SeaLox.Tool` 
