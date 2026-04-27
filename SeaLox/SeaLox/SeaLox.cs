@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-class SeaLox
+﻿class SeaLox
 {
     static bool hadError = false;
     
