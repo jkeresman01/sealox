@@ -1,9 +1,9 @@
-namespace SeaLox.SeaLox;
+namespace SeaLox.Lox;
 
 public class Token
 {
     public TokenType TokenType { get; set; }
-    public string Lexeme { get; set; }
+    public string? Lexeme { get; set; }
     public object? literal { get; set; }
     public int Line { get; set; }
 

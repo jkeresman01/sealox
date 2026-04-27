@@ -1,4 +1,4 @@
-namespace SeaLox.SeaLox;
+namespace SeaLox.Lox;
 
 public enum TokenType
 {

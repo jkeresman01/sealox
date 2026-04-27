@@ -1,4 +1,4 @@
-namespace SeaLox.SeaLox;
+namespace SeaLox.Lox;
 
 public class Scanner(string source)
 {
@@ -206,6 +206,8 @@ public class Scanner(string source)
     private void AddToken(TokenType type, object literal)
     {
         var text = source.Substring(_start, _current - _start);
+
+        var tokensCapacity = _tokens.Capacity;
         
         _tokens.Add(new Token
         {
