@@ -1,3 +1,5 @@
+namespace SeaLox.SeaLox;
+
 public class Token
 {
     public TokenType TokenType { get; set; }

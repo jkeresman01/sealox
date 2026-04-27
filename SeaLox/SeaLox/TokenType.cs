@@ -1,3 +1,5 @@
+namespace SeaLox.SeaLox;
+
 public enum TokenType
 {
     // Single-character tokens.

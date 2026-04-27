@@ -1,3 +1,5 @@
+namespace SeaLox.SeaLox;
+
 public class Scanner(string source)
 {
     private static readonly Dictionary<string, TokenType> Keywords = new()

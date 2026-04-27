@@ -1,4 +1,6 @@
-﻿class SeaLox
+﻿namespace SeaLox.SeaLox;
+
+class SeaLox
 {
     static bool hadError = false;
     
