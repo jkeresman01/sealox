@@ -4,7 +4,104 @@ public class AstGenerator
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Works!");
+        if (args.Length != 1)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Usage: SeaLox.Tool.exe <path>");
+            Environment.Exit(64);
+        }
+
+        var outputDir = args[0];
+
+
+        IDictionary<string, string> expressions = new Dictionary<string, string>
+        {
+            { "Binary", "Expr Left, Token Operator, Expr Right" },
+            { "Grouping", "Expr Expression" },
+            { "Literal", "Object Value" },
+            { "Unary", "Token Operator, Expr Right" }
+        };
+            
+        DefineAst(outputDir, "Expr", expressions);
+        
+        
+        IDictionary<string, string> statements = new Dictionary<string, string>
+        {
+            { "Print", "Expr expression" },
+            { "Var", "Token name, Expr initalizer" }
+        };
+            
+        DefineAst(outputDir, "Stmt", statements);
+    }
+
+    private static void DefineAst(
+        string outputDir,
+        string baseName,
+        IDictionary<string, string> types)
+    {
+        var path = outputDir + "/" + baseName + ".cs";
+
+        Console.WriteLine("Generating " + path);
+
+        using StreamWriter writer = new(path, false);
+        
+        DefineAbstractNamespaces(writer);
+        DefineBaseClass(writer, baseName);
+        DefineTypes(baseName, writer, types);
+        DefineClosing(writer);
+    }
+
+    private static void DefineAbstractNamespaces(StreamWriter writer)
+    {
+            writer.WriteLine("namespace SeaLox.Lox;");
+            writer.WriteLine();
+            writer.WriteLine("using System.Collections.Generic;");
+            writer.WriteLine();
+    }
+
+    private static void DefineBaseClass(StreamWriter writer, string baseName)
+    {
+        writer.WriteLine($"abstract class {baseName}");
+        writer.WriteLine("{");
+        writer.WriteLine(); 
+    }
+    
+    private static void DefineTypes(
+        string basename,
+        StreamWriter writer,
+        IDictionary<string, string> types)
+    {
+        foreach (var type in types.Keys)
+        {
+            DefineType(basename, writer, type, types[type]);
+        }
+    }
+
+    private static void DefineType(
+        string basename,
+        StreamWriter writer, 
+        string className,
+        string props)
+    {
+        writer.WriteLine($"public class {className} : {basename}");
+        writer.WriteLine("{");
+        
+        var properties = props.Split(", ");
+
+        foreach (var property in properties)
+        {
+            writer.WriteLine("     public " + property + " { get; set; }");
+        }
+        
+        writer.WriteLine();
+        writer.WriteLine("}");
+        writer.WriteLine();
+    }
+    
+    private static void DefineClosing(StreamWriter writer)
+    {
+        writer.WriteLine();
+        writer.WriteLine("}");
     }
 
 }

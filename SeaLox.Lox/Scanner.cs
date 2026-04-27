@@ -39,7 +39,7 @@ public class Scanner(string source)
         {
             TokenType = TokenType.Eof,
             Lexeme = "",
-            literal = null,
+            Literal = null,
             Line = _line
         });
 
@@ -213,7 +213,7 @@ public class Scanner(string source)
         {
             TokenType = type,
             Lexeme = text,
-            literal = literal,
+            Literal = literal,
             Line = _line
         });
     }
