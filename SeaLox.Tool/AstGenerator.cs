@@ -47,8 +47,26 @@ public class AstGenerator
         
         DefineAbstractNamespaces(writer);
         DefineBaseClass(writer, baseName);
+        DefineVisitorInterface(writer, types, baseName);
         DefineTypes(baseName, writer, types);
         DefineClosing(writer);
+    }
+
+    private static void DefineVisitorInterface(
+        StreamWriter writer,
+        IDictionary<string, string> types,
+        string baseName)
+    {
+        writer.WriteLine();
+        writer.WriteLine("        public interface IVisitor<R>");
+        writer.WriteLine("        {");
+        
+        foreach (var type in types.Keys)
+        {
+            writer.WriteLine($"              R Visit{type}{baseName}({type} {baseName.ToLower()});");
+        }
+        
+        writer.WriteLine("        }");
     }
 
     private static void DefineAbstractNamespaces(StreamWriter writer)
@@ -94,6 +112,14 @@ public class AstGenerator
         }
         
         writer.WriteLine();
+        writer.WriteLine();
+        
+        writer.WriteLine("      public override R Accept<R>(IVisitor<R> visitor)");
+        writer.WriteLine("      {");
+        writer.WriteLine($"          return visitor.Visit{className}{basename}(this);");
+        writer.WriteLine("      }");
+        writer.WriteLine();
+        
         writer.WriteLine("}");
         writer.WriteLine();
     }
@@ -101,6 +127,8 @@ public class AstGenerator
     private static void DefineClosing(StreamWriter writer)
     {
         writer.WriteLine();
+        writer.WriteLine();
+        writer.WriteLine("        public abstract R Accept<R>(IVisitor<R> visitor);");
         writer.WriteLine("}");
     }
 
