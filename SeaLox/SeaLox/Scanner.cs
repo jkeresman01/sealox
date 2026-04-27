@@ -1,7 +1,5 @@
 public class Scanner(string source)
 {
-    private readonly List<Token> _tokens = new();
-
     private static readonly Dictionary<string, TokenType> Keywords = new()
     {
         { "and", TokenType.And },
@@ -22,15 +20,16 @@ public class Scanner(string source)
         { "while", TokenType.While }
     };
 
-    private int start = 0;
-    private int current = 0;
-    private int line = 1;
+    private readonly List<Token> _tokens = new();
+    private int _start;
+    private int _current;
+    private int _line = 1;
 
     public List<Token> ScanTokens()
     {
         while (!IsAtEnd())
         {
-            start = current;
+            _start = _current;
             ScanToken();
         }
 
@@ -39,7 +38,7 @@ public class Scanner(string source)
             TokenType = TokenType.Eof,
             Lexeme = "",
             literal = null,
-            Line = line
+            Line = _line
         });
 
         return _tokens;
@@ -92,7 +91,7 @@ public class Scanner(string source)
             case '\t':
                 break;
             case '\n':
-                line++;
+                _line++;
                 break;
             case '"': String(); break;
             default:
@@ -106,7 +105,7 @@ public class Scanner(string source)
                 }
                 else
                 {
-                    SeaLox.Error(line, $"Unexpected character '{c}'.");
+                    SeaLox.Error(_line, $"Unexpected character '{c}'.");
                 }
 
                 break;
@@ -120,7 +119,7 @@ public class Scanner(string source)
             Advance();
         }
 
-        var text = source.Substring(start, current - start);
+        var text = source.Substring(_start, _current - _start);
         var tokenType = Keywords.GetValueOrDefault(text, TokenType.Identifier);
 
         AddToken(tokenType);
@@ -138,6 +137,7 @@ public class Scanner(string source)
             Advance();
         }
 
+
         if (Peek() == '.' && IsDigit(PeekNext()))
         {
             //consume the "."
@@ -149,12 +149,12 @@ public class Scanner(string source)
             }
         }
 
-        var number = source.Substring(start, current - start);
+        var number = source.Substring(_start, _current - _start);
 
         AddToken(TokenType.Number, double.Parse(number));
     }
 
-    private char PeekNext() => current + 1 < source.Length ? '\0' : source[current + 1];
+    private char PeekNext() => _current + 1 >= source.Length ? '\0' : source[_current + 1];
 
     private bool IsDigit(char c) => c is >= '0' and <= '9';
 
@@ -163,24 +163,24 @@ public class Scanner(string source)
         while (Peek() != '"' && !IsAtEnd())
         {
             if (Peek() == '\n')
-                line++;
+                _line++;
 
             Advance();
         }
 
         if (IsAtEnd())
         {
-            SeaLox.Error(line, "Unterminated string.");
+            SeaLox.Error(_line, "Unterminated string.");
             return;
         }
 
         Advance();
 
-        var value = source.Substring(start + 1, current - start - 2);
+        var value = source.Substring(_start + 1, _current - _start - 2);
         AddToken(TokenType.String, value);
     }
 
-    private char Peek() => IsAtEnd() ? '\0' : source[current];
+    private char Peek() => IsAtEnd() ? '\0' : source[_current];
 
     private bool Match(char expected)
     {
@@ -189,12 +189,12 @@ public class Scanner(string source)
             return false;
         }
 
-        if (source[current] != expected)
+        if (source[_current] != expected)
         {
             return false;
         }
 
-        current++;
+        _current++;
 
         return true;
     }
@@ -203,18 +203,18 @@ public class Scanner(string source)
 
     private void AddToken(TokenType type, object literal)
     {
-        var text = source.Substring(start, current - start);
+        var text = source.Substring(_start, _current - _start);
         
         _tokens.Add(new Token
         {
             TokenType = type,
             Lexeme = text,
             literal = literal,
-            Line = line
+            Line = _line
         });
     }
 
-    private char Advance() => source[current++];
+    private char Advance() => source[_current++];
 
-    private bool IsAtEnd() => current >= source.Length;
+    private bool IsAtEnd() => _current >= source.Length;
 }
