@@ -1,8 +1,8 @@
 ﻿namespace SeaLox.Lox;
 
-class SeaLox
+internal static class SeaLox
 {
-    static bool hadError = false;
+    static bool hadError;
     
     static void Main(string[] args)
     {
@@ -60,14 +60,32 @@ class SeaLox
     {
         var scanner = new Scanner(source);
         var tokens = scanner.ScanTokens();
+        
+        var parser = new Parser(tokens);
+        var expressions = parser.Parse();
+
         tokens.ForEach(Console.WriteLine);
     }
+
+    public static void Error(Token token, string message)
+    {
+        if (token.TokenType == TokenType.Eof)
+        {
+            Report(token.Line, " at end.", message);
+        }
+        else
+        {
+            Report(token.Line, " at '"  + token.Lexeme + "'", message);
+        }
+    }
     
-    public static void Error(int line, String message) => Report(line, "", message);
+    public static void Error(int line, string message) => Report(line, "", message);
 
     private static void Report(int line, string where, string message)
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine($"[{line}] Error {where}: {message}");
+        Console.ForegroundColor = ConsoleColor.White;
     }
+    
 }

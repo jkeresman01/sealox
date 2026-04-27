@@ -2,7 +2,7 @@ namespace SeaLox.Lox;
 
 using System.Collections.Generic;
 
-abstract class Expr
+public abstract class Expr
 {
     public interface IVisitor<R>
     {
@@ -38,7 +38,7 @@ abstract class Expr
 
     public class Literal : Expr
     {
-        public Object Value { get; set; }
+        public object? Value { get; set; }
 
 
         public override R Accept<R>(IVisitor<R> visitor)
