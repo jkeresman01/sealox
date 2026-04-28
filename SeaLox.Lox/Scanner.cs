@@ -208,8 +208,6 @@ public class Scanner(string source)
     {
         var text = source.Substring(_start, _current - _start);
 
-        var tokensCapacity = _tokens.Capacity;
-        
         _tokens.Add(new Token
         {
             TokenType = type,

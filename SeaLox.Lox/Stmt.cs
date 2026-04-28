@@ -1,5 +1,7 @@
 namespace SeaLox.Lox;
 
+using System.Collections.Generic;
+
 public abstract class Stmt
 {
     public interface IVisitor<R>
@@ -33,7 +35,7 @@ public abstract class Stmt
 
     public class Var : Stmt
     {
-        public Token name { get; set; }
+        public Token Name { get; set; }
         public Expr Initalizer { get; set; }
 
 

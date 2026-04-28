@@ -13,10 +13,71 @@ public class Parser(IList<Token> tokens)
 
         while (!IsAtEnd())
         {
-            statements.Add(Statement());
+            statements.Add(Declaration());
         }
 
         return statements;
+    }
+
+    private Stmt Declaration()
+    {
+        try
+        {
+            return Match(TokenType.Var) ? VarDeclaration() : Statement();
+        }
+        catch (ParseError parseError)
+        {
+            Synchronize(); 
+            return null;
+        }
+    }
+
+    private void Synchronize()
+    {
+        Advance();
+
+        while (!IsAtEnd())
+        {
+            if (Previous().TokenType == TokenType.Semicolon)
+            {
+                return;
+            }
+
+            switch (Peek().TokenType)
+            {
+                case TokenType.Class:
+                case TokenType.For:
+                case TokenType.Fun:
+                case TokenType.If:
+                case TokenType.Print:
+                case TokenType.Return:
+                case TokenType.Var:
+                case TokenType.While:
+                    return;
+            }
+            
+            Advance();
+        }
+    }
+
+    private Stmt VarDeclaration()
+    {
+        var name = Consume(TokenType.Identifier, "Expected variable name");
+
+        Expr initalizer = null;
+
+        while (Match(TokenType.Equal))
+        {
+            initalizer = Expression();
+        }
+
+        Consume(TokenType.Semicolon, "Expected ';' after variable declaration");
+
+        return new Stmt.Var
+        {
+            Name = name,
+            Initalizer = initalizer!
+        };
     }
 
     private Stmt Statement()
@@ -171,23 +232,43 @@ public class Parser(IList<Token> tokens)
     {
         if (Match(TokenType.False))
         {
-            return new Expr.Literal { Value = false };
+            return new Expr.Literal
+            {
+                Value = false
+            };
         }
 
         if (Match(TokenType.True))
 
         {
-            return new Expr.Literal { Value = true };
+            return new Expr.Literal
+            {
+                Value = true
+            };
         }
 
         if (Match(TokenType.Nil))
         {
-            return new Expr.Literal { Value = null };
+            return new Expr.Literal
+            {
+                Value = null
+            };
         }
 
         if (Match(TokenType.Number, TokenType.String))
         {
-            return new Expr.Literal { Value = Previous().Literal };
+            return new Expr.Literal
+            {
+                Value = Previous().Literal
+            };
+        }
+
+        if (Match(TokenType.Identifier))
+        {
+            return new Expr.Variable
+            {
+                Name = Previous()
+            };
         }
 
         if (Match(TokenType.LeftParen))

@@ -2,6 +2,8 @@ namespace SeaLox.Lox;
 
 public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 {
+    private static SealoxEnvironment _environment = new();
+    
     public void Interpret(IEnumerable<Stmt> statements)
     {
         try
@@ -119,7 +121,9 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     public object VisitGroupingExpr(Expr.Grouping expr) => Evaluate(expr.Expression);
     
     public object VisitLiteralExpr(Expr.Literal expr) => expr.Value!;
-
+    
+    public object VisitVariableExpr(Expr.Variable expr) => _environment.Get(expr.Name);
+    
     public object? VisitUnaryExpr(Expr.Unary expr)
     {
         var right = Evaluate(expr.Right);
@@ -164,6 +168,15 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 
     public object VisitVarStmt(Stmt.Var stmt)
     {
-        throw new NotImplementedException();
+        object value = null;
+
+        if (stmt.Initalizer != null)
+        {
+            
+            value = Evaluate(stmt.Initalizer);
+        }
+        
+        _environment.Define(stmt.Name.Lexeme, value);
+        return null;
     }
 }

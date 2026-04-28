@@ -19,6 +19,7 @@ public class AstGenerator
             { "Binary", "Expr Left, Token Operator, Expr Right" },
             { "Grouping", "Expr Expression" },
             { "Literal", "Object Value" },
+            { "Variable", "Token Name" },
             { "Unary", "Token Operator, Expr Right" }
         };
 
@@ -29,7 +30,7 @@ public class AstGenerator
         {
             { "Expression", "Expr Expr" },
             { "Print", "Expr Expression" },
-            { "Var", "Token name, Expr Initalizer" }
+            { "Var", "Token Name, Expr Initalizer" }
         };
 
         DefineAst(outputDir, "Stmt", statements);

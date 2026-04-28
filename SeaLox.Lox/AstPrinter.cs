@@ -13,15 +13,13 @@ public class AstPrinter : Expr.IVisitor<string>
         => Parenthesize("group",  expr.Expression);
 
     public string VisitLiteralExpr(Expr.Literal expr)
+        => expr.Value is null ? "nil" : expr.Value.ToString()!;
+
+    public string VisitVariableExpr(Expr.Variable expr)
     {
-        if (expr.Value == null)
-        {
-            return "nil";
-        }
-        
-        return expr.Value.ToString()!;
-    }    
-    
+        throw new NotImplementedException();
+    }
+
     public string VisitUnaryExpr(Expr.Unary expr)
         => Parenthesize(expr.Operator.Lexeme!, expr.Right);
     
