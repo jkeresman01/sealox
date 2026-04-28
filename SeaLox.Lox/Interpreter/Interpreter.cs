@@ -122,6 +122,28 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 
     public object VisitLiteralExpr(Expr.Literal expr) => expr.Value!;
 
+    public object VisitLogicalExpr(Expr.Logical expr)
+    {
+        var left = Evaluate(expr.Left);
+
+        if (expr.Op.TokenType == TokenType.Or)
+        {
+            if (IsTruthy(left))
+            {
+                return left;
+            }
+        }
+        else
+        {
+            if (!IsTruthy(left))
+            {
+                return left;
+            }
+        }
+
+        return Evaluate(expr.Right);
+    }
+
     public object VisitVariableExpr(Expr.Variable expr) => _environment.Get(expr.Name);
 
     public object VisitAssignExpr(Expr.Assign expr)
@@ -164,6 +186,21 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     private object Evaluate(Expr expr) => expr.Accept(this);
 
     public object VisitExpressionStmt(Stmt.Expression stmt) => Evaluate(stmt.Expr);
+
+    public object VisitIfStmt(Stmt.If stmt)
+    {
+        if (IsTruthy(stmt.Condition))
+        {
+            Execute(stmt.ThenBranch);
+        }
+        else if (stmt.ElseBranch != null)
+        {
+            Execute(stmt.ElseBranch);
+        }
+
+        return null;
+    }
+
 
     public object VisitPrintStmt(Stmt.Print stmt)
     {
@@ -208,6 +245,16 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         }
 
         _environment.Define(stmt.Name.Lexeme, value);
+        return null;
+    }
+
+    public object VisitWhileStmt(Stmt.While stmt)
+    {
+        while (IsTruthy(Evaluate(stmt.Condition)))
+        {
+            Execute(stmt.Body);
+        }
+        
         return null;
     }
 }

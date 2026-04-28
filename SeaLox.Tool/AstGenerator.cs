@@ -13,12 +13,12 @@ public class AstGenerator
 
         var outputDir = args[0];
 
-
         IDictionary<string, string> expressions = new Dictionary<string, string>
         {
             { "Binary", "Expr Left, Token Operator, Expr Right" },
             { "Grouping", "Expr Expression" },
             { "Literal", "Object Value" },
+            { "Logical", "Expr Left, Token Op, Expr Right" },
             { "Variable", "Token Name" },
             { "Assign", "Token Name, Expr Value" },
             { "Unary", "Token Operator, Expr Right" }
@@ -26,13 +26,14 @@ public class AstGenerator
 
         DefineAst(outputDir, "Expr", expressions);
 
-
         IDictionary<string, string> statements = new Dictionary<string, string>
         {
             { "Expression", "Expr Expr" },
+            { "If", "Expr Condition, Stmt ThenBranch, Stmt ElseBranch" },
             { "Print", "Expr Expression" },
             { "Block", "List<Stmt> Statements" },
-            { "Var", "Token Name, Expr Initalizer" }
+            { "Var", "Token Name, Expr Initalizer" },
+            { "While", "Expr Condition, Stmt Body" }
         };
 
         DefineAst(outputDir, "Stmt", statements);

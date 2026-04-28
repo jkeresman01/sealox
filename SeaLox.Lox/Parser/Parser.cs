@@ -84,6 +84,16 @@ public class Parser(IList<Token> tokens)
 
     private Stmt Statement()
     {
+        if (Match(TokenType.If))
+        {
+            return IfStatement();
+        }
+        
+        if (Match(TokenType.While))
+        {
+            return WhileStatement();
+        }
+        
         if (Match(TokenType.Print))
         {
             return PrintStatement();
@@ -98,6 +108,42 @@ public class Parser(IList<Token> tokens)
         }
 
         return ExpressionStatement();
+    }
+
+    private Stmt WhileStatement()
+    {
+        Consume(TokenType.LeftParen, "Expect '(' after while statement");
+        var condition = Expression();
+        Consume(TokenType.RightParen, "Expect ')' after while statement");
+        var body = Statement();
+
+        return new Stmt.While
+        {
+            Condition = condition,
+            Body = body
+        };
+    }
+
+    private Stmt IfStatement()
+    {
+        Consume(TokenType.LeftParen, "Expect '('  after if statement");
+        var condition = Expression();
+        Consume(TokenType.RightParen, "Expect ')' after if statement");
+
+        var thenBranch = Statement();
+        Stmt elseBranch = null;
+
+        if (Match(TokenType.Else))
+        {
+            elseBranch = Statement();
+        }
+
+        return new Stmt.If
+        {
+            Condition = condition,
+            ElseBranch = elseBranch!,
+            ThenBranch = thenBranch
+        };
     }
 
     private List<Stmt> Block()
@@ -117,7 +163,10 @@ public class Parser(IList<Token> tokens)
     {
         var value = Expression();
         Consume(TokenType.Semicolon, "Expected ';' after expression");
-        return new Stmt.Print { Expression = value };
+        return new Stmt.Expression
+        {
+            Expr = value
+        };
     }
 
     private Stmt PrintStatement()
@@ -131,7 +180,7 @@ public class Parser(IList<Token> tokens)
 
     private Expr Assignment()
     {
-        var expr = Equality();
+        var expr = Or();
 
         if (Match(TokenType.Equal))
         {
@@ -148,6 +197,44 @@ public class Parser(IList<Token> tokens)
             }
 
             Error(equals, "Invalid assignment target");
+        }
+
+        return expr;
+    }
+
+    private Expr Or()
+    {
+        var expr = And();
+
+        if (Match(TokenType.Or))
+        {
+            var op = Previous();
+            var right = And();
+            expr = new Expr.Logical
+            {
+                Left = expr,
+                Op = op,
+                Right = right
+            };
+        }
+
+        return expr;
+    }
+
+    private Expr And()
+    {
+        var expr = Equality();
+
+        while (Match(TokenType.And))
+        {
+            var op = Previous();
+            var right = Equality();
+            expr = new Expr.Logical
+            {
+                Left = expr,
+                Op = op,
+                Right = right
+            };
         }
 
         return expr;

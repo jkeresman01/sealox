@@ -7,9 +7,11 @@ public abstract class Stmt
     public interface IVisitor<R>
     {
         R VisitExpressionStmt(Expression stmt);
+        R VisitIfStmt(If stmt);
         R VisitPrintStmt(Print stmt);
         R VisitBlockStmt(Block stmt);
         R VisitVarStmt(Var stmt);
+        R VisitWhileStmt(While stmt);
     }
 
     public class Expression : Stmt
@@ -20,6 +22,19 @@ public abstract class Stmt
         public override R Accept<R>(IVisitor<R> visitor)
         {
             return visitor.VisitExpressionStmt(this);
+        }
+    }
+
+    public class If : Stmt
+    {
+        public Expr Condition { get; set; }
+        public Stmt ThenBranch { get; set; }
+        public Stmt ElseBranch { get; set; }
+
+
+        public override R Accept<R>(IVisitor<R> visitor)
+        {
+            return visitor.VisitIfStmt(this);
         }
     }
 
@@ -54,6 +69,18 @@ public abstract class Stmt
         public override R Accept<R>(IVisitor<R> visitor)
         {
             return visitor.VisitVarStmt(this);
+        }
+    }
+
+    public class While : Stmt
+    {
+        public Expr Condition { get; set; }
+        public Stmt Body { get; set; }
+
+
+        public override R Accept<R>(IVisitor<R> visitor)
+        {
+            return visitor.VisitWhileStmt(this);
         }
     }
 

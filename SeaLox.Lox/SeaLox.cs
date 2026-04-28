@@ -71,11 +71,6 @@ internal static class SeaLox
 
         var interpreter = new Interpreter();
         interpreter.Interpret(statements);
-
-        //Console.WriteLine("Tokens:");
-        //tokens.ForEach(Console.WriteLine);
-        //Console.WriteLine("-----------");
-        
     }
 
     public static void Error(Token token, string message)

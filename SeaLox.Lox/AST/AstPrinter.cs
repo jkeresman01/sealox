@@ -15,16 +15,6 @@ public class AstPrinter : Expr.IVisitor<string>
     public string VisitLiteralExpr(Expr.Literal expr)
         => expr.Value is null ? "nil" : expr.Value.ToString()!;
 
-    public string VisitVariableExpr(Expr.Variable expr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public string VisitAssignExpr(Expr.Assign expr)
-    {
-        throw new NotImplementedException();
-    }
-
     public string VisitUnaryExpr(Expr.Unary expr)
         => Parenthesize(expr.Operator.Lexeme!, expr.Right);
     
@@ -44,5 +34,12 @@ public class AstPrinter : Expr.IVisitor<string>
         
         return sb.ToString();
     }
+    
+    public string VisitLogicalExpr(Expr.Logical expr) => throw new NotImplementedException();
+
+    public string VisitVariableExpr(Expr.Variable expr) => throw new NotImplementedException();
+    
+    public string VisitAssignExpr(Expr.Assign expr) => throw new NotImplementedException();
+   
 
 }
