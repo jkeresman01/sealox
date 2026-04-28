@@ -130,7 +130,8 @@ public class Scanner(string source)
     private bool IsAlphaNumeric(char c) => IsAlpha(c) || IsDigit(c);
 
 
-    private bool IsAlpha(char c) => c is >= 'a' and <= 'z' or >= 'A' and <= 'Z' or '_';
+    private bool IsAlpha(char c) 
+        => c is >= 'a' and <= 'z' or >= 'A' and <= 'Z' or '_';
 
     private void Number()
     {

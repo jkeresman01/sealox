@@ -3,8 +3,8 @@
 internal static class SeaLox
 {
     static bool hadError;
-    
-    static void Main(string[] args)
+
+    private static void Main(string[] args)
     {
         switch (args.Length)
         {
@@ -32,9 +32,9 @@ internal static class SeaLox
             {
                 break;
             }
-            
+
             Run(line);
-            
+
             hadError = false;
         }
     }
@@ -52,7 +52,7 @@ internal static class SeaLox
         {
             Environment.Exit(65);
         }
-        
+
         Run(source);
     }
 
@@ -60,7 +60,7 @@ internal static class SeaLox
     {
         var scanner = new Scanner(source);
         var tokens = scanner.ScanTokens();
-        
+
         var parser = new Parser(tokens);
         var expression = parser.Parse();
 
@@ -69,11 +69,18 @@ internal static class SeaLox
             return;
         }
 
-        Console.WriteLine("Token:");
+        Console.WriteLine("Tokens:");
         tokens.ForEach(Console.WriteLine);
-
-        Console.WriteLine(new AstPrinter().Print(expression));
+        Console.WriteLine("-----------");
         
+        Console.WriteLine("AST: ");
+        Console.WriteLine(new AstPrinter().Print(expression));
+        Console.WriteLine("---------");
+        
+        Console.WriteLine("Interpreting: ");
+        var interpreter = new Interpreter();
+        interpreter.Interpret(expression);
+        Console.WriteLine("-----------");
     }
 
     public static void Error(Token token, string message)
@@ -84,10 +91,10 @@ internal static class SeaLox
         }
         else
         {
-            Report(token.Line, " at '"  + token.Lexeme + "'", message);
+            Report(token.Line, " at '" + token.Lexeme + "'", message);
         }
     }
-    
+
     public static void Error(int line, string message) => Report(line, "", message);
 
     private static void Report(int line, string where, string message)
@@ -96,5 +103,11 @@ internal static class SeaLox
         Console.WriteLine($"[{line}] Error {where}: {message}");
         Console.ForegroundColor = ConsoleColor.White;
     }
-    
+
+    public static void RuntimeError(RuntimeError error)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"RuntimeError: {error.Message} at line {error.Token.Line}");
+        Console.ForegroundColor = ConsoleColor.White;
+    }
 }
