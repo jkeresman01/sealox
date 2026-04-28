@@ -62,25 +62,20 @@ internal static class SeaLox
         var tokens = scanner.ScanTokens();
 
         var parser = new Parser(tokens);
-        var expression = parser.Parse();
+        var statements = parser.Parse();
 
         if (hadError)
         {
             return;
         }
 
-        Console.WriteLine("Tokens:");
-        tokens.ForEach(Console.WriteLine);
-        Console.WriteLine("-----------");
-        
-        Console.WriteLine("AST: ");
-        Console.WriteLine(new AstPrinter().Print(expression));
-        Console.WriteLine("---------");
-        
-        Console.WriteLine("Interpreting: ");
         var interpreter = new Interpreter();
-        interpreter.Interpret(expression);
-        Console.WriteLine("-----------");
+        interpreter.Interpret(statements);
+
+        //Console.WriteLine("Tokens:");
+        //tokens.ForEach(Console.WriteLine);
+        //Console.WriteLine("-----------");
+        
     }
 
     public static void Error(Token token, string message)

@@ -1,7 +1,5 @@
 namespace SeaLox.Lox;
 
-using System.Collections.Generic;
-
 public abstract class Stmt
 {
     public interface IVisitor<R>

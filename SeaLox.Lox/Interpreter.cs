@@ -1,19 +1,23 @@
 namespace SeaLox.Lox;
 
-public class Interpreter : Expr.IVisitor<object>
+public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 {
-    public void Interpret(Expr expr)
+    public void Interpret(IEnumerable<Stmt> statements)
     {
         try
         {
-            var value = Evaluate(expr);
-            Console.WriteLine(Stringify(value));
+            foreach (var stmt in statements)
+            {
+                Execute(stmt);
+            }
         }
         catch (RuntimeError error)
         {
             SeaLox.RuntimeError(error);
         }
     }
+
+    private void Execute(Stmt stmt) => stmt.Accept(this);
 
     private string? Stringify(object? obj)
     {
@@ -147,4 +151,19 @@ public class Interpreter : Expr.IVisitor<object>
     }
 
     private object Evaluate(Expr expr) => expr.Accept(this);
+    
+    public object VisitExpressionStmt(Stmt.Expression stmt) => Evaluate(stmt.Expr);
+
+    public object VisitPrintStmt(Stmt.Print stmt)
+    {
+        var value = Evaluate(stmt.Expression);
+        Console.WriteLine(Stringify(value));
+        return null;
+    }
+    
+
+    public object VisitVarStmt(Stmt.Var stmt)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -3,20 +3,44 @@ namespace SeaLox.Lox;
 public class Parser(IList<Token> tokens)
 {
     private class ParseError : Exception;
-    
+
     private int _current;
 
 
-    public Expr Parse()
+    public IEnumerable<Stmt> Parse()
     {
-        try
+        var statements = new List<Stmt>();
+
+        while (!IsAtEnd())
         {
-            return Expression();
+            statements.Add(Statement());
         }
-        catch (ParseError error)
+
+        return statements;
+    }
+
+    private Stmt Statement()
+    {
+        if (Match(TokenType.Print))
         {
-            return null;
+            return PrintStatement();
         }
+
+        return ExpressionStatement();
+    }
+
+    private Stmt ExpressionStatement()
+    {
+        var value = Expression();
+        Consume(TokenType.Semicolon, "Expected ';' after expression");
+        return new Stmt.Print { Expression = value };
+    }
+
+    private Stmt PrintStatement()
+    {
+        var value = Expression();
+        Consume(TokenType.Semicolon, "Expected ';' after expression");
+        return new Stmt.Print { Expression = value };
     }
 
     private Expr Expression() => Equality();
@@ -52,7 +76,7 @@ public class Parser(IList<Token> tokens)
         {
             _current++;
         }
-        
+
         return Previous();
     }
 
@@ -182,7 +206,7 @@ public class Parser(IList<Token> tokens)
         {
             return Advance();
         }
-        
+
         throw Error(Peek(), message);
     }
 
