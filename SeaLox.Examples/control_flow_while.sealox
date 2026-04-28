@@ -1,0 +1,6 @@
+var counter = 10;
+
+while(counter >= 0) {
+    print "Snow WHite is cute";
+    counter = counter - 1;
+}

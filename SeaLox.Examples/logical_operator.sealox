@@ -1,0 +1,2 @@
+print "Hi, cute snow white" or 2;
+print nil or "Hi";

@@ -1,0 +1,8 @@
+var a  = 10;
+var b = 5;
+
+if(a > b) {
+    print "Snow White is cute"; 
+} else  {
+    print "Snow White is also cute";
+}
