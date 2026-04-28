@@ -38,7 +38,7 @@ public abstract class Expr
 
     public class Literal : Expr
     {
-        public object? Value { get; set; }
+        public Object Value { get; set; }
 
 
         public override R Accept<R>(IVisitor<R> visitor)

@@ -2,17 +2,29 @@ namespace SeaLox.Lox;
 
 using System.Collections.Generic;
 
-abstract class Stmt
+public abstract class Stmt
 {
     public interface IVisitor<R>
     {
+        R VisitExpressionStmt(Expression stmt);
         R VisitPrintStmt(Print stmt);
         R VisitVarStmt(Var stmt);
     }
 
+    public class Expression : Stmt
+    {
+        public Expr Expr { get; set; }
+
+
+        public override R Accept<R>(IVisitor<R> visitor)
+        {
+            return visitor.VisitExpressionStmt(this);
+        }
+    }
+
     public class Print : Stmt
     {
-        public Expr expression { get; set; }
+        public Expr Expression { get; set; }
 
 
         public override R Accept<R>(IVisitor<R> visitor)
@@ -24,7 +36,7 @@ abstract class Stmt
     public class Var : Stmt
     {
         public Token name { get; set; }
-        public Expr initalizer { get; set; }
+        public Expr Initalizer { get; set; }
 
 
         public override R Accept<R>(IVisitor<R> visitor)

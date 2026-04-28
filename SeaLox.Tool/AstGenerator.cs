@@ -21,16 +21,17 @@ public class AstGenerator
             { "Literal", "Object Value" },
             { "Unary", "Token Operator, Expr Right" }
         };
-            
+
         DefineAst(outputDir, "Expr", expressions);
-        
-        
+
+
         IDictionary<string, string> statements = new Dictionary<string, string>
         {
-            { "Print", "Expr expression" },
-            { "Var", "Token name, Expr initalizer" }
+            { "Expression", "Expr Expr" },
+            { "Print", "Expr Expression" },
+            { "Var", "Token name, Expr Initalizer" }
         };
-            
+
         DefineAst(outputDir, "Stmt", statements);
     }
 
@@ -44,7 +45,7 @@ public class AstGenerator
         Console.WriteLine("Generating " + path);
 
         using StreamWriter writer = new(path, false);
-        
+
         DefineAbstractNamespaces(writer);
         DefineBaseClass(writer, baseName);
         DefineVisitorInterface(writer, types, baseName);
@@ -60,30 +61,30 @@ public class AstGenerator
         writer.WriteLine();
         writer.WriteLine("        public interface IVisitor<R>");
         writer.WriteLine("        {");
-        
+
         foreach (var type in types.Keys)
         {
             writer.WriteLine($"              R Visit{type}{baseName}({type} {baseName.ToLower()});");
         }
-        
+
         writer.WriteLine("        }");
     }
 
     private static void DefineAbstractNamespaces(StreamWriter writer)
     {
-            writer.WriteLine("namespace SeaLox.Lox;");
-            writer.WriteLine();
-            writer.WriteLine("using System.Collections.Generic;");
-            writer.WriteLine();
+        writer.WriteLine("namespace SeaLox.Lox;");
+        writer.WriteLine();
+        writer.WriteLine("using System.Collections.Generic;");
+        writer.WriteLine();
     }
 
     private static void DefineBaseClass(StreamWriter writer, string baseName)
     {
-        writer.WriteLine($"abstract class {baseName}");
+        writer.WriteLine($"public abstract class {baseName}");
         writer.WriteLine("{");
-        writer.WriteLine(); 
+        writer.WriteLine();
     }
-    
+
     private static void DefineTypes(
         string basename,
         StreamWriter writer,
@@ -97,33 +98,33 @@ public class AstGenerator
 
     private static void DefineType(
         string basename,
-        StreamWriter writer, 
+        StreamWriter writer,
         string className,
         string props)
     {
         writer.WriteLine($"public class {className} : {basename}");
         writer.WriteLine("{");
-        
+
         var properties = props.Split(", ");
 
         foreach (var property in properties)
         {
             writer.WriteLine("     public " + property + " { get; set; }");
         }
-        
+
         writer.WriteLine();
         writer.WriteLine();
-        
+
         writer.WriteLine("      public override R Accept<R>(IVisitor<R> visitor)");
         writer.WriteLine("      {");
         writer.WriteLine($"          return visitor.Visit{className}{basename}(this);");
         writer.WriteLine("      }");
         writer.WriteLine();
-        
+
         writer.WriteLine("}");
         writer.WriteLine();
     }
-    
+
     private static void DefineClosing(StreamWriter writer)
     {
         writer.WriteLine();
@@ -131,5 +132,4 @@ public class AstGenerator
         writer.WriteLine("        public abstract R Accept<R>(IVisitor<R> visitor);");
         writer.WriteLine("}");
     }
-
 }
