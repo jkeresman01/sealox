@@ -8,6 +8,7 @@ public abstract class Stmt
     {
         R VisitExpressionStmt(Expression stmt);
         R VisitPrintStmt(Print stmt);
+        R VisitBlockStmt(Block stmt);
         R VisitVarStmt(Var stmt);
     }
 
@@ -30,6 +31,17 @@ public abstract class Stmt
         public override R Accept<R>(IVisitor<R> visitor)
         {
             return visitor.VisitPrintStmt(this);
+        }
+    }
+
+    public class Block : Stmt
+    {
+        public List<Stmt> Statements { get; set; }
+
+
+        public override R Accept<R>(IVisitor<R> visitor)
+        {
+            return visitor.VisitBlockStmt(this);
         }
     }
 

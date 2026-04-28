@@ -31,6 +31,7 @@ public class AstGenerator
         {
             { "Expression", "Expr Expr" },
             { "Print", "Expr Expression" },
+            { "Block", "List<Stmt> Statements" },
             { "Var", "Token Name, Expr Initalizer" }
         };
 

@@ -2,8 +2,8 @@ namespace SeaLox.Lox;
 
 public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 {
-    private static readonly SealoxEnvironment _environment = new();
-    
+    private static SealoxEnvironment _environment = new();
+
     public void Interpret(IEnumerable<Stmt> statements)
     {
         try
@@ -119,10 +119,11 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 
 
     public object VisitGroupingExpr(Expr.Grouping expr) => Evaluate(expr.Expression);
-    
+
     public object VisitLiteralExpr(Expr.Literal expr) => expr.Value!;
-    
+
     public object VisitVariableExpr(Expr.Variable expr) => _environment.Get(expr.Name);
+
     public object VisitAssignExpr(Expr.Assign expr)
     {
         var value = Evaluate(expr.Value);
@@ -161,7 +162,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     }
 
     private object Evaluate(Expr expr) => expr.Accept(this);
-    
+
     public object VisitExpressionStmt(Stmt.Expression stmt) => Evaluate(stmt.Expr);
 
     public object VisitPrintStmt(Stmt.Print stmt)
@@ -170,7 +171,32 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         Console.WriteLine(Stringify(value));
         return null;
     }
-    
+
+    public object VisitBlockStmt(Stmt.Block stmt)
+    {
+        ExecuteBlock(stmt.Statements, new SealoxEnvironment(_environment));
+        return null;
+    }
+
+    private void ExecuteBlock(IEnumerable<Stmt> stmtStatements, SealoxEnvironment environment)
+    {
+        var previous = _environment;
+
+        try
+        {
+            _environment = environment;
+
+            foreach (var stmt in stmtStatements)
+            {
+                Execute(stmt);
+            }
+        }
+        finally
+        {
+            _environment = previous;
+        }
+    }
+
 
     public object VisitVarStmt(Stmt.Var stmt)
     {
@@ -178,10 +204,9 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 
         if (stmt.Initalizer != null)
         {
-            
             value = Evaluate(stmt.Initalizer);
         }
-        
+
         _environment.Define(stmt.Name.Lexeme, value);
         return null;
     }

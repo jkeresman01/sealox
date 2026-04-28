@@ -29,7 +29,7 @@ public class Parser(IList<Token> tokens)
         }
         catch (ParseError parseError)
         {
-            Synchronize(); 
+            Synchronize();
             return null;
         }
     }
@@ -57,7 +57,7 @@ public class Parser(IList<Token> tokens)
                 case TokenType.While:
                     return;
             }
-            
+
             Advance();
         }
     }
@@ -89,7 +89,28 @@ public class Parser(IList<Token> tokens)
             return PrintStatement();
         }
 
+        if (Match(TokenType.LeftBrace))
+        {
+            return new Stmt.Block
+            {
+                Statements = Block()
+            };
+        }
+
         return ExpressionStatement();
+    }
+
+    private List<Stmt> Block()
+    {
+        var stmts = new List<Stmt>();
+
+        while (!Check(TokenType.RightBrace) && !IsAtEnd())
+        {
+            stmts.Add(Declaration());
+        }
+
+        Consume(TokenType.RightBrace, "Expect '}' after block.");
+        return stmts;
     }
 
     private Stmt ExpressionStatement()
@@ -128,7 +149,7 @@ public class Parser(IList<Token> tokens)
 
             Error(equals, "Invalid assignment target");
         }
-        
+
         return expr;
     }
 
