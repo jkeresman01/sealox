@@ -71,7 +71,7 @@ public class Parser(IList<Token> tokens)
     private Expr Comparison()
     {
         var expr = Term();
-        while (Match(TokenType.Greater, TokenType.Greater,
+        while (Match(TokenType.Greater, TokenType.GreaterEqual,
                    TokenType.Less, TokenType.LessEqual))
         {
             var operatorToken = Previous();
@@ -133,7 +133,7 @@ public class Parser(IList<Token> tokens)
             var opToken = Previous();
             var right = Unary();
 
-            return new Expr.Binary
+            return new Expr.Unary
             {
                 Operator = opToken,
                 Right = right
@@ -163,7 +163,7 @@ public class Parser(IList<Token> tokens)
 
         if (Match(TokenType.Number, TokenType.String))
         {
-            return new Expr.Literal { Value = Previous().Lexeme };
+            return new Expr.Literal { Value = Previous().Literal };
         }
 
         if (Match(TokenType.LeftParen))
