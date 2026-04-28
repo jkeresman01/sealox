@@ -1,0 +1,18 @@
+var a = 2;
+print a;
+a = 3;
+
+print a + 4;
+
+var snowWhite = "Cute Snow White";
+var sayHi = "Hi";
+print sayHi + " " + snowWhite;
+
+var b = 3;
+var c = 4;
+var d = 12;
+
+print b + c + d;
+
+var f = 3;
+print f = 4;

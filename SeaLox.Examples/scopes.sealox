@@ -1,0 +1,20 @@
+var a = "global snow white a";
+var b = "global snow white b";
+var c = "global snow white c";
+
+{
+    var a = "outer snow white a";
+    var b = "outer snow white b";
+    {
+        var a = "inner snow white a";
+        print a;
+        print b;
+        print c;
+    }
+    print a;
+    print b;
+    print c;
+}
+print a;
+print b;
+print c;
