@@ -20,6 +20,11 @@ public class AstPrinter : Expr.IVisitor<string>
         throw new NotImplementedException();
     }
 
+    public string VisitAssignExpr(Expr.Assign expr)
+    {
+        throw new NotImplementedException();
+    }
+
     public string VisitUnaryExpr(Expr.Unary expr)
         => Parenthesize(expr.Operator.Lexeme!, expr.Right);
     

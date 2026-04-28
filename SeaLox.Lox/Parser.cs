@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace SeaLox.Lox;
 
 public class Parser(IList<Token> tokens)
@@ -104,7 +106,31 @@ public class Parser(IList<Token> tokens)
         return new Stmt.Print { Expression = value };
     }
 
-    private Expr Expression() => Equality();
+    private Expr Expression() => Assignment();
+
+    private Expr Assignment()
+    {
+        var expr = Equality();
+
+        if (Match(TokenType.Equal))
+        {
+            var equals = Previous();
+            var value = Assignment();
+
+            if (expr is Expr.Variable variable)
+            {
+                return new Expr.Assign
+                {
+                    Name = variable.Name,
+                    Value = value
+                };
+            }
+
+            Error(equals, "Invalid assignment target");
+        }
+        
+        return expr;
+    }
 
     private Expr Equality()
     {

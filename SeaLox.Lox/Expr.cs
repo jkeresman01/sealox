@@ -10,6 +10,7 @@ public abstract class Expr
         R VisitGroupingExpr(Grouping expr);
         R VisitLiteralExpr(Literal expr);
         R VisitVariableExpr(Variable expr);
+        R VisitAssignExpr(Assign expr);
         R VisitUnaryExpr(Unary expr);
     }
 
@@ -56,6 +57,18 @@ public abstract class Expr
         public override R Accept<R>(IVisitor<R> visitor)
         {
             return visitor.VisitVariableExpr(this);
+        }
+    }
+
+    public class Assign : Expr
+    {
+        public Token Name { get; set; }
+        public Expr Value { get; set; }
+
+
+        public override R Accept<R>(IVisitor<R> visitor)
+        {
+            return visitor.VisitAssignExpr(this);
         }
     }
 

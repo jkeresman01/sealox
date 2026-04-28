@@ -20,6 +20,7 @@ public class AstGenerator
             { "Grouping", "Expr Expression" },
             { "Literal", "Object Value" },
             { "Variable", "Token Name" },
+            { "Assign", "Token Name, Expr Value" },
             { "Unary", "Token Operator, Expr Right" }
         };
 

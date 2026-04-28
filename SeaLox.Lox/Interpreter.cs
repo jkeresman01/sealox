@@ -2,7 +2,7 @@ namespace SeaLox.Lox;
 
 public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 {
-    private static SealoxEnvironment _environment = new();
+    private static readonly SealoxEnvironment _environment = new();
     
     public void Interpret(IEnumerable<Stmt> statements)
     {
@@ -123,7 +123,13 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
     public object VisitLiteralExpr(Expr.Literal expr) => expr.Value!;
     
     public object VisitVariableExpr(Expr.Variable expr) => _environment.Get(expr.Name);
-    
+    public object VisitAssignExpr(Expr.Assign expr)
+    {
+        var value = Evaluate(expr.Value);
+        _environment.Assign(expr.Name, value);
+        return value;
+    }
+
     public object? VisitUnaryExpr(Expr.Unary expr)
     {
         var right = Evaluate(expr.Right);
