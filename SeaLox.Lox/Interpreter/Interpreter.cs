@@ -215,7 +215,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         return null;
     }
 
-    private void ExecuteBlock(IEnumerable<Stmt> stmtStatements, SealoxEnvironment environment)
+    private void ExecuteBlock(IEnumerable<Stmt> statements, SealoxEnvironment environment)
     {
         var previous = _environment;
 
@@ -223,7 +223,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
         {
             _environment = environment;
 
-            foreach (var stmt in stmtStatements)
+            foreach (var stmt in statements)
             {
                 Execute(stmt);
             }
