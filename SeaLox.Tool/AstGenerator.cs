@@ -2,6 +2,9 @@ namespace SeaLox.Tool;
 
 public class AstGenerator
 {
+    private const string Stmt = "Stmt";
+    private const string Expr = "Expr";
+    
     static void Main(string[] args)
     {
         if (args.Length != 1)
@@ -24,7 +27,7 @@ public class AstGenerator
             { "Unary", "Token Operator, Expr Right" }
         };
 
-        DefineAst(outputDir, "Expr", expressions);
+        DefineAst(outputDir,Expr, expressions);
 
         IDictionary<string, string> statements = new Dictionary<string, string>
         {
@@ -35,8 +38,8 @@ public class AstGenerator
             { "Var", "Token Name, Expr Initalizer" },
             { "While", "Expr Condition, Stmt Body" }
         };
-
-        DefineAst(outputDir, "Stmt", statements);
+        
+        DefineAst(outputDir, Stmt, statements);
     }
 
     private static void DefineAst(

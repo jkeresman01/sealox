@@ -88,15 +88,20 @@ public class Parser(IList<Token> tokens)
         {
             return IfStatement();
         }
-        
+
         if (Match(TokenType.While))
         {
             return WhileStatement();
         }
-        
+
         if (Match(TokenType.Print))
         {
             return PrintStatement();
+        }
+
+        if (Match(TokenType.For))
+        {
+            return ForStatement();
         }
 
         if (Match(TokenType.LeftBrace))
@@ -108,6 +113,85 @@ public class Parser(IList<Token> tokens)
         }
 
         return ExpressionStatement();
+    }
+
+    private Stmt ForStatement()
+    {
+        Consume(TokenType.LeftParen, "Expect '(' after 'for'.");
+
+        Stmt initalizer;
+        if (Match(TokenType.Semicolon))
+        {
+            initalizer = null;
+        }
+        else if (Match(TokenType.Var))
+        {
+            initalizer = VarDeclaration();
+        }
+        else
+        {
+            initalizer = ExpressionStatement();
+        }
+
+        Expr condition = null;
+
+        if (!Check(TokenType.Semicolon))
+        {
+            condition = Expression();
+        }
+
+        Consume(TokenType.Semicolon, "Expect ';' after loop codition");
+
+        Expr increment = null;
+        if (!Check(TokenType.RightParen))
+        {
+            increment = Expression();
+        }
+
+        Consume(TokenType.RightParen, "Expected ')' after for clause");
+
+        var body = Statement();
+
+        var statements = new List<Stmt>
+        {
+            body,
+            new Stmt.Expression
+            {
+                Expr = increment
+            }
+        };
+
+        if (increment != null)
+        {
+            body = new Stmt.Block
+            {
+                Statements = statements
+            };
+        }
+
+        if (condition == null)
+        {
+            condition = new Expr.Literal { Value = true };
+        }
+
+        body = new Stmt.While
+        {
+            Condition = condition,
+            Body = body
+        };
+
+        var stmts = new List<Stmt>
+        {
+            initalizer,
+            body
+        };
+
+        if (initalizer != null)
+        {
+            body = new Stmt.Block { Statements = stmts };
+        }
+
+        return body;
     }
 
     private Stmt WhileStatement()
