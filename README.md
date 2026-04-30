@@ -21,3 +21,6 @@ dotnet run --project SeaLox.Tool
 [![Watch the video](https://img.youtube.com/vi/4GZdeWWraTs/maxresdefault.jpg)](https://www.youtube.com/watch?v=4GZdeWWraTs)
 
 <i>Remember its all in comunication.....</i>
+
+<i>The quote isn't: "Walk the talk" it's just talk don't walk.</i>
+
